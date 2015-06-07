@@ -124,12 +124,8 @@ puts {}
 
 # Invoke zenity to prompt for which device to program? Even if there's only one candidate?! (could be a good idea to avoid accidentally reprogramming the wrong device)
 
-# zenity --title="Available Arduino Devices" --list --text="Choose the device to program:" --separator=';' --width=500 --height=200 --column="Device:" --column="USB ID:" --column="ino model:" --column="Type" 1 2 3 4 5 6 7 8
-
-# So, how to build the list of values in Tcl? And run it properly?!
-
 set zenity_exec_command [list]
-lappend zenity_exec_command exec -ignorestderr zenity {--title=Available Arduino Devices} --list {--text=Choose the device to program:} --separator=| --width=500 --height=200 --column=Device: {--column=USB ID:} {--column=Model ID:} {--column=Device Type:}
+lappend zenity_exec_command exec -ignorestderr zenity {--title=Available Arduino Devices} --list {--text=Choose the device to program:} --separator=| --width=720 --height=280 --column=Device: {--column=USB ID:} {--column=Model ID:} {--column=Device Type:}
 
 # Tack on the found Arduino-type device details to the zenity command line:
 foreach dev [lsort [scan]] {
