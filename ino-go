@@ -40,20 +40,20 @@ if {[llength $argv] == 1} {
 # Obviously these data are really a relation. It might be overkill to use SQLite however..?  Perhaps we can set things up as a list of lists and then transfer that into arrays.
 # Row structure is: USB device ID, distinctive substring in /dev/serial/by-id, Ino/boards.txt profile identifier, descriptive text.
 set Arduino_model_data {
-	0403:6001 FTDI_FT232R                    ???      {FDTI-connected device (older 1280-based Mega, Nano, etc.))}
-	2341:003b www.arduino.cc__TODO           ???      {Arduino Serial Adapter}
-	2341:0045 www.arduino.cc__TODO           ???      {Arduino Serial Adapter R3}
-	2341:0001 www.arduino.cc__Arduino_Uno    uno      {Arduino Uno or clone}
-	2341:0043 www.arduino.cc__TODO           uno      {Arduino Uno R3}
-	2341:0010 Arduino__TODO                  mega2560 {Arduino Mega 2560}
-	2341:0042 Arduino__www.arduino.cc__0042  mega2560 {Arduino Mega 2560 R3}
-	2341:003f Arduino__TODO                  mega2560 {Arduino Mega ADK}
-	2341:0044 Arduino__TODO                  mega2560 {Arduino Mega ADK R3}
-	2341:8036 Arduino_LLC_Arduino_Leonardo   leonardo {Arduino Leonardo or clone (Freetronics Leostick v1.0, DSpace SMD kit board, etc.)}
-	26ba:0003 www.freetronics.com_0003       uno      {Freetronics Eleven}
-	26ba:8002 Unknown_USB_IO_Board           leonardo {Freetronics LeoStick}
-	03eb:204b Donald_Delmar_Davis_Benito7g   dspace_badge_unknown {DSpace Badge kit + base}
-	03eb:2060 TODO                           dspace_robot_unknown {DSpace Robot}
+	0403:6001  FTDI_FT232R                    ???       {FDTI-connected device (older 1280-based Mega, Nano, etc.))}
+	2341:003b  www.arduino.cc__TODO           ???       {Arduino Serial Adapter}
+	2341:0045  www.arduino.cc__TODO           ???       {Arduino Serial Adapter R3}
+	2341:0001  www.arduino.cc__Arduino_Uno    uno       {Arduino Uno or clone}
+	2341:0043  www.arduino.cc__TODO           uno       {Arduino Uno R3}
+	2341:0010  Arduino__TODO                  mega2560  {Arduino Mega 2560}
+	2341:0042  Arduino__www.arduino.cc__0042  mega2560  {Arduino Mega 2560 R3}
+	2341:003f  Arduino__TODO                  mega2560  {Arduino Mega ADK}
+	2341:0044  Arduino__TODO                  mega2560  {Arduino Mega ADK R3}
+	2341:8036  Arduino_LLC_Arduino_Leonardo   leonardo  {Arduino Leonardo or clone (Freetronics Leostick v1.0, DSpace SMD kit board, etc.)}
+	26ba:0003  www.freetronics.com_0003       uno       {Freetronics Eleven}
+	26ba:8002  Unknown_USB_IO_Board           leonardo  {Freetronics LeoStick}
+	03eb:204b  Donald_Delmar_Davis_Benito7g   dspace_badge_unknown  {DSpace Badge kit + base}
+	03eb:2060  TODO                           dspace_robot_unknown  {DSpace Robot}
 }
 
 # TODO: Other official Arduino models, Freetronics USBDroid, DSpace Robot details.
@@ -137,14 +137,14 @@ foreach dev [lsort [scan]] {
 
 #puts $zenity_exec_command
 puts "Launching zenity..."
-# What a shame zenity is so slow to launch.  TODO: maybe replace zenity with a Tk GUI?!
+# What a shame zenity is so slow to launch.  TODO: maybe replace zenity with a Tk GUI?!  Esp. if we want further interaction with the user: asking for device model where ambiguous, reporting build/upload errors/status, creating/updating .ini file.
 
 if [catch {set selected_device [{*}$zenity_exec_command]}] {
 	puts "No device selected. Quitting."
 	exit
 }
 
-puts "choice = $selected_device"
+puts "Selected device = $selected_device"
 
 # TODO: if device model is unknown ("???"), prompt additionally for the device model.
 
@@ -154,13 +154,25 @@ set serial $selected_device
 # TODO: offer to store the settings in an .ini file.
 # TODO: create .ini file (or allow user to choose whether this is a one-off?)
 
-puts "Building code..."
-set build_result  [exec -ignorestderr ino build -m $model]
-# TODO: detect build failure and notify user and exit in the event.
-puts "Uploading..."
-set upload_result [exec -ignorestderr ino upload -m $model -p $serial]
+# Hmm, I don't think build_result normally ends up with anything useful, and if there's an exception, it won't be set at all.
+# TODO: add ANSI terminal codes for helpful colouring. Will that pass through to Geany?
+puts "\nBuilding code..."
+if [catch {set build_result  [exec -ignorestderr ino build -m $model]} message] {
+	puts "ERROR: ino build: <<$message>>"
+	exit
+} else {
+	if {$build_result != {}} {
+		puts "build_result=<<\n$build_result\n>>"
+	}
+}
 
-# Is this necessary?
-puts $build_result
-puts $upload_result
+puts "\nUploading..."
+if [catch {set upload_result [exec -ignorestderr ino upload -m $model -p $serial]} message] {
+	puts "ERROR: ino upload: <<$message>>"
+} else {
+	if {$upload_result != {}} {
+		puts "upload_result=<<\n$upload_result\n>>"
+	}
+}
 
+# ENDUT! HOCH HECH!
