@@ -113,11 +113,6 @@ proc scan {} {
 	return $candidate_devices
 }
 
-#puts $candidate_devices
-#foreach id [scan] {puts "$id: $model_label($id) ($ino_model($id))"}
-
-# Should we also determine the canonical USB device special file name, e.g. /dev/ttyACM2? Or is that not really relevant, given how subject to change they are (not to mention user-unfriendly)?  Can we do that using Tcl's file command perhaps?
-
 puts "\nFound devices:"
 foreach dev [lsort [scan]] {puts "$dev: $found_usb_id($dev) $found_model_label($dev) ($found_ino_model($dev))"}
 puts {}
