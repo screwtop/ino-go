@@ -95,7 +95,7 @@ set known_devices [array names dev_substring]
 
 array unset found_devices
 
-proc scan {} {
+proc scan_for_devices {} {
 	global known_devices dev_substring ino_model model_label
 	global found_usb_id found_ino_model found_model_label
 	set candidate_devices [list]
@@ -113,8 +113,11 @@ proc scan {} {
 	return $candidate_devices
 }
 
+# We have to find the devices and then print them, since we're sorting them. The list is used twice, so let's store it in a variable:
+set found_dev_list [lsort [scan_for_devices]]
+
 puts "\nFound devices:"
-foreach dev [lsort [scan]] {puts "$dev: $found_usb_id($dev) $found_model_label($dev) ($found_ino_model($dev))"}
+foreach dev $found_dev_list {puts "$dev: $found_usb_id($dev) $found_model_label($dev) ($found_ino_model($dev))"}
 puts {}
 
 # Invoke zenity to prompt for which device to program? Even if there's only one candidate?! (could be a good idea to avoid accidentally reprogramming the wrong device)
@@ -123,7 +126,7 @@ set zenity_exec_command [list]
 lappend zenity_exec_command exec -ignorestderr zenity {--title=Available Arduino Devices} --list {--text=Choose the device to program:} --separator=| --width=720 --height=280 --column=Device: {--column=USB ID:} {--column=Model ID:} {--column=Device Type:}
 
 # Tack on the found Arduino-type device details to the zenity command line:
-foreach dev [lsort [scan]] {
+foreach dev $found_dev_list {
 	lappend zenity_exec_command $dev
 	lappend zenity_exec_command $found_usb_id($dev)
 	lappend zenity_exec_command $found_ino_model($dev)
