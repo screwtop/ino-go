@@ -51,6 +51,7 @@ set Arduino_model_data {
 	2341:0044  Arduino__TODO                  mega2560  {Arduino Mega ADK R3}
 	2341:8036  Arduino_LLC_Arduino_Leonardo   leonardo  {Arduino Leonardo or clone (Freetronics Leostick v1.0, DSpace SMD kit board, etc.)}
 	26ba:0003  www.freetronics.com_0003       uno       {Freetronics Eleven}
+	20a0:4150  www.freetronics.com_Eleven     uno       {Freetronics USBDroid}
 	26ba:8002  Unknown_USB_IO_Board           leonardo  {Freetronics LeoStick}
 	03eb:204b  Donald_Delmar_Davis_Benito7g   dspace_badge_unknown  {DSpace Badge kit + base}
 	03eb:2060  DSpace__www.dspace.org.nz__DSpace_Robot_2.0  robot  {DSpace Robot}
