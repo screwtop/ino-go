@@ -124,6 +124,7 @@ foreach dev $found_dev_list {puts "$dev: $found_usb_id($dev) $found_model_label(
 puts {}
 
 # Invoke zenity to prompt for which device to program? Even if there's only one candidate?! (could be a good idea to avoid accidentally reprogramming the wrong device)
+# AFAICT there's no way to have the selection default to the first item in the list (namely if it's the only one).
 
 set zenity_exec_command [list]
 lappend zenity_exec_command exec -ignorestderr zenity {--title=Available Arduino Devices} --list {--text=Choose the device to program:} --separator=| --width=720 --height=280 --column=Device: {--column=USB ID:} {--column=Model ID:} {--column=Device Type:}
