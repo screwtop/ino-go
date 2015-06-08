@@ -143,7 +143,7 @@ puts "Launching zenity..."
 
 if {[catch {set selected_device [{*}$zenity_exec_command]}] || $selected_device == {}} {
 	puts "No device selected. Quitting."
-	exit
+	exit 1
 }
 
 puts "Selected device = $selected_device"
@@ -161,7 +161,7 @@ set serial $selected_device
 puts "\nBuilding code..."
 if [catch {set build_result  [exec -ignorestderr ino build -m $model]} message] {
 	puts "ERROR: ino build: <<$message>>"
-	exit
+	exit 2
 } else {
 	if {$build_result != {}} {
 		puts "build_result=<<\n$build_result\n>>"
@@ -171,6 +171,7 @@ if [catch {set build_result  [exec -ignorestderr ino build -m $model]} message] 
 puts "\nUploading..."
 if [catch {set upload_result [exec -ignorestderr ino upload -m $model -p $serial]} message] {
 	puts "ERROR: ino upload: <<$message>>"
+	exit 3
 } else {
 	if {$upload_result != {}} {
 		puts "upload_result=<<\n$upload_result\n>>"
